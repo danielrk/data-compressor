@@ -1,0 +1,12 @@
+Compression algo with trie methods:
+
+Trie t = top of the trie
+
+C = t
+While ((K = getchar()) != EOF)
+	Trie currT = getT(C,K);
+	if (currT != NULL && hasCode(currT))
+		
+		C = currT
+	else
+		putBit(getCode(C))
