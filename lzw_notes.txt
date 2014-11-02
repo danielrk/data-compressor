@@ -1,3 +1,25 @@
+initializing table with all 1-char strings?
+	set int to 0-255? no
+
+code.c is for sending (encode) and receiving (decode)
+
+
+why getchar() returns int:
+	needs a way to signal special character (e.g. EOF)
+—
+Questions to ponder:
+-new assignment of codes after prunes has to be same in encode (new trie) and decode (new array)
+	-use combined array/trie structure
+
+array has pointers to nodes
+nodes have codes===indices of array
+when adding string to trie, put new pointer in array to that node
+pruning trie:
+	find root of subtrie that needs to be pruned
+	recursively free/set array pointer to NULL
+	make new array by putting non-NULL pointers in contiguously
+	(if you want to keep the 1-char strings, check trie depth)
+——
 Compression algo with trie methods:
 
 Trie t = top of the trie

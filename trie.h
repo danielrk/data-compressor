@@ -5,15 +5,11 @@ typedef struct node *Trie;
 Trie createT (void);
 
 // Destroy T; return NULL
-Trie destroyT (Trie t);
+void destroyT (Trie t);
 
 // Return location of (w, K) in table if inside
 // Otherwise NULL
-Trie getT (Trie t, int K); 
-
-// Return 1 if T encoded
-// 0 otherwise
-int hasCode (Trie t);
+Trie getT (Trie t, int *pK); 
 
 // Return #appearances in T
 int getNapT(Trie t);
@@ -24,11 +20,11 @@ int getCodeT (Trie t);
 // Increment #appearances in T
 void sawT (Trie t);
 
-// Insert (w, K) into table
-// Does not check if already exists
-void insertT (Trie t, int K);  
+// Insert (w, K) into trie
+// Assumes prefix is in trie
+void insertT (Trie t, int *Kv, int Kc, int i);  
 
-// Update code in T
-void encodeT (Trie t, int code);
+// Update code in T to I
+void encodeT (Trie t, int i);
 
 
