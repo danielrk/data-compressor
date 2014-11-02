@@ -9,7 +9,7 @@ void destroyT (Trie t);
 
 // Return location of (w, K) in table if inside
 // Otherwise NULL
-Trie getT (Trie t, int *pK); 
+Trie getT (Trie t, int *Kv, int Kc); 
 
 // Return #appearances in T
 int getNapT(Trie t);
