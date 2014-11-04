@@ -33,7 +33,7 @@ static Trie makeNode (int c, int i)
 Trie createT (void)
 {
     Trie t = malloc (sizeof(*t));
-    t->K = '\0';
+    t->K = -1;
     t->code = -1;
     t->tv = NULL;
     t->tc = 0;
@@ -158,6 +158,7 @@ void insertT (Trie t, int *Kv, int Kc, int i)
         if (t->tc > 0) // free old TV if not empty
             free(t->tv);
         t->tv = new_tv;
+        (t->tc)++;
     }
     else { // not at leaf
         int loc = search(t->tv, t->tc, *Kv);
@@ -171,4 +172,10 @@ void encodeT (Trie t, int i) {
     t->code = i;
 }
 
-
+// Print out the keys in the trie
+void printT (Trie t, int level) {
+    printf("Level %d: (code %d, key %d)\n", level, t->code, t->K);
+    for (int i = 0; i < t->tc; i++) {
+        printT(*((t->tv) + i), level + 1);
+    }
+}

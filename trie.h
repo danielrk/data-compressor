@@ -27,4 +27,7 @@ void insertT (Trie t, int *Kv, int Kc, int i);
 // Update code in T to I
 void encodeT (Trie t, int i);
 
+// Print out the keys in the trie
+void printT (Trie t, int level);
+
 
