@@ -9,13 +9,20 @@
 
 int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
     
+    int next_code = 0;
+    int nBits = 1;
+   
+    Trie t = createT();
+    if (!E_FLAG) { // initialize all one-char strings
+        for (int c = 0; c < 256; c++)
+            insertT(t, &c, 1, next_code++);
+    }
 
-   // Trie t = createT();
-   // 
-   // while ((int c = getchar()) != EOF) {
-   // }
+    printT(t, 0);
+    //while ((int c = getchar()) != EOF) {
+    //}
 
-   // destroyT(t);
+    destroyT(t);
 
     return 0;
 }
