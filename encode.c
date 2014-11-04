@@ -60,8 +60,12 @@ int main (int argc, char **argv)
 
         encode(MAXBITS, E_FLAG, P_FLAG);
     }
-    else
+    else {
+        if (argc > 1)
+            DIE("usage: decode");
+
         decode();
+    }
 
     return 0;
 }
