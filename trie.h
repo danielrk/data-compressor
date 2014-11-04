@@ -7,9 +7,9 @@ Trie createT (void);
 // Destroy T; return NULL
 void destroyT (Trie t);
 
-// Return location of (w, K) in table if inside
+// Return child of T with K if exists,
 // Otherwise NULL
-Trie getT (Trie t, int *Kv, int Kc); 
+Trie getT (Trie t, int K);
 
 // Return #appearances in T
 int getNapT(Trie t);
@@ -20,9 +20,9 @@ int getCodeT (Trie t);
 // Increment #appearances in T
 void sawT (Trie t);
 
-// Insert (w, K) into trie
-// Assumes prefix is in trie
-void insertT (Trie t, int *Kv, int Kc, int i);  
+// Insert K as child of T with code I
+// Assumes K isn't already inserted
+void insertT (Trie t, int K, int i);  
 
 // Update code in T to I
 void encodeT (Trie t, int i);

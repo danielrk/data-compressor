@@ -108,62 +108,44 @@ static int search (Trie *tv, int tc, int c)
     }
 }
 
-// Return location of (w, K) in table if inside,
-// i.e., the node containing K
+// Return child of T with K if exists,
 // Otherwise NULL
-// Assumes w exists in table
-Trie getT (Trie t, int *Kv, int Kc) {
-    if (Kc == 1) {
-        int loc = search(t->tv, t->tc, *Kv);
-        if (loc >= t->tc) // not in trie
-            return NULL;
-        else { 
-            Trie t_child = *(t->tv + loc);
-
-            // K among t's children?
-            if (t_child->K == *Kv)
-                return t_child;
-
-            // string not in table
-            return NULL;
-        }
-    }
-    else { // not at leaf
-        int loc = search(t->tv, t->tc, *Kv);
+Trie getT (Trie t, int K) {
+    int loc = search(t->tv, t->tc, K);
+    if (loc >= t->tc) // not in trie
+        return NULL;
+    else { 
         Trie t_child = *(t->tv + loc);
-        return getT(t_child, Kv+1, Kc-1);
+
+        // K among t's children?
+        if (t_child->K == K)
+            return t_child;
+
+        // string not in table
+        return NULL;
     }
 }
 
 
 
 
-// Insert (w, K) into table with code I
-// Assumes prefix is in trie and last node is not
-void insertT (Trie t, int *Kv, int Kc, int i)
+// Insert K as child of T with code I
+// Assumes K isn't already inserted
+void insertT (Trie t, int K, int i)
 {
-    if (Kc < 1)
-        DIE("insertT with Kc<1");
-    if (Kc == 1) { // 
-        int c   = *Kv;                      // char to insert
-        int loc = search(t->tv, t->tc, c); // where
-        Trie *new_tv = malloc(sizeof(Trie)*(t->tc + 1));// could optimize time by doubling when out of space
-        for (int m = 0; m < loc; m++) {
-            new_tv[m] = *((t->tv)+m);
-        }
-        new_tv[loc] = makeNode(c, i);
-        for (int m = loc + 1; m < t->tc + 1; m++) {
-            new_tv[m] = *((t->tv)+m-1);
-        }
-        if (t->tc > 0) // free old TV if not empty
-            free(t->tv);
-        t->tv = new_tv;
-        (t->tc)++;
+    int loc = search(t->tv, t->tc, K); // where
+    Trie *new_tv = malloc(sizeof(Trie)*(t->tc + 1));// could optimize time by doubling when out of space
+    for (int m = 0; m < loc; m++) {
+        new_tv[m] = *((t->tv)+m);
     }
-    else { // not at leaf
-        int loc = search(t->tv, t->tc, *Kv);
-        insertT(*((t->tv)+loc), Kv+1, Kc-1, i);
+    new_tv[loc] = makeNode(K, i);
+    for (int m = loc + 1; m < t->tc + 1; m++) {
+        new_tv[m] = *((t->tv)+m-1);
     }
+    if (t->tc > 0) // free old TV if not empty
+        free(t->tv);
+    t->tv = new_tv;
+    (t->tc)++;
 }
 
 void encodeT (Trie t, int i) {
