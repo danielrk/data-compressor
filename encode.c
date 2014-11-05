@@ -67,8 +67,12 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
             // =========== UPDATE NBITS =======================
 
             // Prune as soon as last slot taken
-            if (P_FLAG && next_code == (int)pow(2, MAXBITS))
-                prune(t);
+            if (next_code == (int)pow(2, MAXBITS)) {
+                if (P_FLAG)
+                    prune(t);
+                else
+                    ;
+            }
 
             // Increase NBITS only when #codes assigned
             // exceeds it

@@ -9,5 +9,6 @@ Date  Time   Spent  Work completed
 11/3  23:00  1:00   Simplified trie insertion
 11/5   6:00  2:00   Stage 1 encode without prune
 11/5   8:00  1:30   Fixed -e
+11/5   9:30  1:30   Verified nBits properly updates
              ----
                     TOTAL time spent
