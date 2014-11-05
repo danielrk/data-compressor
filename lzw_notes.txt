@@ -1,3 +1,9 @@
+BUG: without -e, misses the newline (need to print last char)
+BUG: with -e, i print out single-chars twice if next char is also unknown
+ 	-instead of building on unknown chars, just insert them and 
+	
+
+
 BUG: infinite loop on -e new single chars when codes can’t be assigned
 
 

@@ -62,9 +62,8 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
                 else
                     insertT(C, K, next_code++, 1);
             }
-            else if (C == t) // failed insert new single-char
-                continue;
             
+
             // =========== UPDATE NBITS =======================
 
             // Prune as soon as last slot taken
@@ -75,18 +74,27 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
             // exceeds it
             else if (next_code > (int)pow(2, nBits))
                 nBits++;
+            
+            // ============ RESET C =====
+            if (C == t)         // new single-char, so skip
+                continue;
+            else {
+                C = getT(t, K); // increments NAP
 
-            C = getT(t, K); // increments NAP
+                if (C == NULL) { // (EMPTY, K) not in table
+                    if (!E_FLAG)
+                        DIE_FORMAT("E_FLAG false, yet (EMPTY, K=%d) not in table\n", K);
 
-            if (C == NULL) { // (EMPTY, K) not in table
-                if (!E_FLAG)
-                    DIE_FORMAT("E_FLAG false, yet (EMPTY, K=%d) not in table\n", K);
-
-                ungetc(K, stdin); // single-char on next insert
-                C = t;
+                    ungetc(K, stdin); // single-char on next insert
+                    C = t;
+                }
             }
         }
     }
+
+    if (C != t)
+        putBits(nBits, getCodeT(C));
+
     printT(t, 0);
     destroyT(t); 
     return 0;

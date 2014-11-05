@@ -8,5 +8,6 @@ Date  Time   Spent  Work completed
 11/3  18:40  1:00   Arg parsing and Makefile
 11/3  23:00  1:00   Simplified trie insertion
 11/5   6:00  2:00   Stage 1 encode without prune
+11/5   8:00  1:30   Fixed -e
              ----
                     TOTAL time spent
