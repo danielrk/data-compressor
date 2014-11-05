@@ -35,7 +35,7 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
     Trie C = t;
     int K;
     while ((K = getchar()) != EOF) {
-        child = getT(C, K);
+        Trie child = getT(C, K);
         if (child != NULL)
             C = child;
         else { 
@@ -69,7 +69,7 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
 
             // Prune as soon as last slot taken
             if (P_FLAG && next_code == (int)pow(2, MAXBITS))
-                prune();
+                prune(t);
 
             // Increase NBITS only when #codes assigned
             // exceeds it
@@ -85,10 +85,10 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
                 ungetc(K, stdin); // single-char on next insert
                 C = t;
             }
+        }
     }
     printT(t, 0);
-    destroyT(t);
-
+    destroyT(t); 
     return 0;
 }
 
