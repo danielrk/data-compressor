@@ -1,3 +1,14 @@
+BUG: infinite loop on -e new single chars when codes can’t be assigned
+
+
+Check if pruning works for -e case
+
+Find natural algorithm for -e case… setting C = (EMPTY, K) might not be optimal.
+what if you can’t assign a code to a new single-char?
+
+-e: special codes for new characters
+	0 (in however many nBits) special char followed by  8bit
+ 
 initializing table with all 1-char strings?
 	set int to 0-255? no
 

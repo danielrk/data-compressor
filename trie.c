@@ -16,15 +16,15 @@ struct node {
 
 
 // Return a one-element trie with K set to C
-// with code I
-static Trie makeNode (int c, int i)
+// with code I, #appearances = NAP
+static Trie makeNode (int c, int i, int nap)
 {
     Trie t = malloc (sizeof(*t));
     t->K = c;
     t->code = i;
     t->tv = NULL;
     t->tc = 0;
-    t->nap = 0;
+    t->nap = nap;
     return t;
 }
 
@@ -108,7 +108,7 @@ static int search (Trie *tv, int tc, int c)
     }
 }
 
-// Return child of T with K if exists,
+// Return child of T with K and increment NAP if exists,
 // Otherwise NULL
 Trie getT (Trie t, int K) {
     int loc = search(t->tv, t->tc, K);
@@ -118,8 +118,10 @@ Trie getT (Trie t, int K) {
         Trie t_child = *(t->tv + loc);
 
         // K among t's children?
-        if (t_child->K == K)
+        if (t_child->K == K) {
+            sawT(t_child); // increment NAP
             return t_child;
+        }
 
         // string not in table
         return NULL;
@@ -129,16 +131,16 @@ Trie getT (Trie t, int K) {
 
 
 
-// Insert K as child of T with code I
+// Insert K as child of T with code I, NAP=nap
 // Assumes K isn't already inserted
-void insertT (Trie t, int K, int i)
+void insertT (Trie t, int K, int i, int nap)
 {
     int loc = search(t->tv, t->tc, K); // where
     Trie *new_tv = malloc(sizeof(Trie)*(t->tc + 1));// could optimize time by doubling when out of space
     for (int m = 0; m < loc; m++) {
         new_tv[m] = *((t->tv)+m);
     }
-    new_tv[loc] = makeNode(K, i);
+    new_tv[loc] = makeNode(K, i, nap);
     for (int m = loc + 1; m < t->tc + 1; m++) {
         new_tv[m] = *((t->tv)+m-1);
     }

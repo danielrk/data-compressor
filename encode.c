@@ -1,30 +1,90 @@
 #include "trie.h"
-//#include "/c/cs323/Hwk2/code.h"
+#include "/c/cs323/Hwk2/code.h" 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
+#include <limits.h>
 
 #define DIE(msg) fprintf (stderr, "%s\n", msg), exit (EXIT_FAILURE)
 #define DIE_FORMAT(format,value)  fprintf (stderr, format, value), exit (EXIT_FAILURE)
 
+// Special codes
+int ESCAPE = 0;
+ 
+void prune(Trie t) {
+    ;
+}
 int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
     
-    int next_code = 0;
-    int nBits = 1;
-   
+    int next_code = 0; // == number of codes assigned
+    int nBits = 1;     // #bits required to send NEXT code
+    
+    if (E_FLAG)
+        next_code = 1; // already assigned 0 to ESCAPE
+
     Trie t = createT();
 
     if (!E_FLAG) { // initialize all one-char strings
         for (int K = 0; K < 256; K++)
-            insertT(t, K, next_code++);
+            insertT(t, K, next_code++, 0);
 
         nBits = 8;
     }
 
-    //Trie C = t;
-    //while ((int K = getchar()) != EOF) {
-    //   if  
-    //}
+    Trie C = t;
+    while ((int K = getchar()) != EOF) {
+        child = getT(C, K);
+        if (child != NULL)
+            C = child;
+        else { 
+            // ============ PUTBITS ==========================
+            if (C == t) { // new 1-char string
+                if (!E_FLAG)
+                    DIE_FORMAT("E_FLAG false, yet (EMPTY, K=%d) not in table\n", K);
+
+                putBits(nBits, ESCAPE);
+                putBits(CHAR_BIT, K); 
+            }
+            else {
+                // Output code C
+                putBits(nBits, getCodeT(C));
+            } 
+
+            
+            // =========== INSERT ==============================
+
+            // insert new code if table not full
+            if (next_code < (int)pow(2, MAXBITS)) {
+                if (C == t)
+                    insertT(C, K, next_code++, 0); // nap++ below on getT
+                else
+                    insertT(C, K, next_code++, 1);
+            }
+            else if (C == t) // failed insert new single-char
+                continue;
+            
+            // =========== UPDATE NBITS =======================
+
+            // Prune as soon as last slot taken
+            if (P_FLAG && next_code == (int)pow(2, MAXBITS))
+                prune();
+
+            // Increase NBITS only when #codes assigned
+            // exceeds it
+            else if (next_code > (int)pow(2, nBits))
+                nBits++;
+
+            C = getT(t, K); // increments NAP
+
+            if (C == NULL) { // (EMPTY, K) not in table
+                if (!E_FLAG)
+                    DIE_FORMAT("E_FLAG false, yet (EMPTY, K=%d) not in table\n", K);
+
+                ungetc(K, stdin); // single-char on next insert
+                C = t;
+            }
+    }
     printT(t, 0);
     destroyT(t);
 
