@@ -33,7 +33,8 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
     }
 
     Trie C = t;
-    while ((int K = getchar()) != EOF) {
+    int K;
+    while ((K = getchar()) != EOF) {
         child = getT(C, K);
         if (child != NULL)
             C = child;
