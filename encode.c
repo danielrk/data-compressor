@@ -12,10 +12,6 @@
 // Special codes
 int ESCAPE = 0;
 
-// Delete nodes with low NAP when table is full
-void prune(Trie t) {
-    ;
-}
 
 // Compress STDIN into stream of codes
 int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
@@ -72,7 +68,7 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
             // Prune as soon as last slot taken
             if (next_code == (int)pow(2, MAXBITS)) {
                 if (P_FLAG)
-                    prune(t);
+                    prune(&t, E_FLAG);
                 else
                     ;
             }
