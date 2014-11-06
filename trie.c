@@ -57,7 +57,7 @@ static void freeT (Trie t)
         ;
     }
     for (int i = 0; i < t->tc; i++) {
-        destroyT(*((t->tv)+i));
+        freeT(*((t->tv)+i));
     }
 
     free (t->tv);
