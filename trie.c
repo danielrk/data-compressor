@@ -236,7 +236,7 @@ int prune (Trie *pT, int E_FLAG)
         for (int j = 0; j < arr_size; j++) {
 
             if (arr[j] != NULL) {
-                new_arr = realloc(new_arr, new_i+1);
+                new_arr = realloc(new_arr, sizeof(Trie)*(new_i+1));
                 new_arr[new_i] = arr[j];
 
                 // new code = index in new array

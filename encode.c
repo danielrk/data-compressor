@@ -143,19 +143,19 @@ int main (int argc, char **argv)
         if (m_flag) // last arg was "-m"
             DIE("usage: encode [-m MAXBITS] [-p] [-e]");
 
-        Trie t = createT();
+        // Trie t = createT();
 
-        int code = 0;
-        insertT(t, 1, code++, 1);
-        insertT(t, 2, code++, 1);
-        insertT(t, 3, code++, 5);
-        
-        prune(&t, 0);
+        // int code = 1;
+        // insertT(t, 1, code++, 1);
+        // insertT(t, 2, code++, 1);
+        // insertT(t, 3, code++, 5);
+        // 
+        // prune(&t, 1);
 
-        printT(t, 0);
-        destroyT(t);
+        // printT(t, 0);
+        // destroyT(t);
 
-        //encode(MAXBITS, E_FLAG, P_FLAG);
+        encode(MAXBITS, E_FLAG, P_FLAG);
     }
     else {
         if (argc > 1)
