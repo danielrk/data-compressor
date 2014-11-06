@@ -50,8 +50,8 @@ Trie createT (void)
     return t;
 }
 
-// Destroy trie T
-void destroyT (Trie t)
+// Free recursively
+static void freeT (Trie t) 
 {
     if (t == NULL){
         ;
@@ -62,7 +62,13 @@ void destroyT (Trie t)
 
     free (t->tv);
     free (t);
-    
+}
+
+// Destroy trie T
+void destroyT (Trie t)
+{
+    freeT(t); 
+
     // Free array
     free (arr);
 }
