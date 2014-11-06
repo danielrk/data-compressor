@@ -6,8 +6,8 @@
 #define DIE_FORMAT(format,value)  fprintf (stderr, format, value), exit (EXIT_FAILURE)
 
 // Nodes will be placed in ARRAY for pruning
-static Trie *nodev = malloc(sizeof(Trie));
-static int   nodec = 1;
+static Trie *arr = NULL;
+static int   arr_size = 0;
 
 // Trie data structure
 struct node {
@@ -42,6 +42,11 @@ Trie createT (void)
     t->tv = NULL;
     t->tc = 0;
     t->nap = -1;
+    
+    // Initialize ARR at 1 since first code is at most index 1
+    arr = malloc(sizeof(Trie));
+    arr_size = 1;
+
     return t;
 }
 
@@ -54,8 +59,12 @@ void destroyT (Trie t)
     for (int i = 0; i < t->tc; i++) {
         destroyT(*((t->tv)+i));
     }
+
     free (t->tv);
     free (t);
+    
+    // Free array
+    free (arr);
 }
 
 
@@ -147,8 +156,8 @@ void insertT (Trie t, int K, int i, int nap)
 
     new_tv[loc] = makeNode(K, i, nap);
     // put node into array
-    array = realloc(array, sizeof(Trie) * (++tc) );
-    array[i] = new_tv[loc];
+    arr = realloc(arr, sizeof(Trie) * (++arr_size) );
+    arr[i] = new_tv[loc];
 
 
     for (int m = loc + 1; m < t->tc + 1; m++) {
