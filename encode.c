@@ -12,6 +12,19 @@
 // Special codes
 int ESCAPE = 0;
 
+// Return smallest #bits necessary to
+// write NCODES codes
+int get_nbits(int nCodes) {
+
+    int n = 1;
+    int max = (int)pow(2,n);
+    while (max < nCodes)
+        max = (int)pow(2,++n);
+    
+    return n;
+}
+
+
 
 // Compress STDIN into stream of codes
 int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
@@ -67,8 +80,11 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
 
             // Prune as soon as last slot taken
             if (next_code == (int)pow(2, MAXBITS)) {
-                if (P_FLAG)
-                    prune(&t, E_FLAG);
+                if (P_FLAG) {
+
+                    next_code = prune(&t, E_FLAG);
+                    nBits = get_nbits(next_code);
+                }
                 else
                     ;
             }

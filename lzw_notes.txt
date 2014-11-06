@@ -1,3 +1,5 @@
+need to update nBits after pruning, etc
+
 root Trie will NOT be placed in ARRAY; every other node will
 
 # NAP == number of appearances only after it’s given a code
