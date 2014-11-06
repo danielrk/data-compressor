@@ -6,6 +6,8 @@
 #define DIE_FORMAT(format,value)  fprintf (stderr, format, value), exit (EXIT_FAILURE)
 
 // Nodes will be placed in ARRAY for pruning
+// ARR_SIZE === # codes assigned
+// ARR[0] will be NULL w/ -e option; hold a node otherwise
 static Trie *arr = NULL;
 static int   arr_size = 0;
 
@@ -45,6 +47,7 @@ Trie createT (void)
     
     // Initialize ARR at 1 since first code is at most index 1
     arr = malloc(sizeof(Trie));
+    arr[0] = NULL;
     arr_size = 1;
 
     return t;
@@ -162,7 +165,8 @@ void insertT (Trie t, int K, int i, int nap)
 
     new_tv[loc] = makeNode(K, i, nap);
     // put node into array
-    arr = realloc(arr, sizeof(Trie) * (++arr_size) );
+    arr = realloc(arr, sizeof(Trie) * (i+1) );
+    arr_size = i+1;
     arr[i] = new_tv[loc];
 
 
@@ -174,6 +178,111 @@ void insertT (Trie t, int K, int i, int nap)
     t->tv = new_tv;
     (t->tc)++;
 }
+
+// Delete (and NULLify in parent TV) 
+// nodes with low NAP and reassign codes
+// Return # codes assigned
+int prune (Trie *pT, int E_FLAG) 
+{
+    if ((*pT)->nap == -1) { // root
+        for (int i = 0; i < (*pT)->tc; i++) {
+
+            prune((*pT)->tv + i, E_FLAG);
+        }
+
+        // reinitialize ARR to have contiguous nodes
+        Trie *new_arr = malloc(sizeof(Trie));
+        int new_i     = 0; // index for NEW_ARR === # elts in NEW_ARR
+
+        if (E_FLAG) { // code 0 already used
+            *new_arr = NULL;
+            new_i = 1;
+        }
+       
+
+
+        // Shrink TV, TC
+        if (E_FLAG) {
+
+        }
+        // Re-insert 1-char strings by default if necessary
+        else if (!E_FLAG) {
+            //
+            //??????????????????????????????????????????????????????
+            //reinitialize the 1-char strings for non -e
+            //oh yeah, shrink TV if some children are pruned off
+        }
+
+        // move to new array
+        for (int j = 0; j < arr_size; j++) {
+
+            if (arr[j] != NULL) {
+                new_arr = realloc(new_arr, new_i+1);
+                new_arr[new_i] = arr[j];
+
+                // new code = index in new array
+                (new_arr[new_i])->code = new_i;
+
+                new_i++;
+            }
+        }
+
+        free(arr);
+        arr = new_arr;
+        arr_size = new_i;
+
+        return arr_size; // == next_code == # codes assigned
+    }
+   
+    // non-root node
+    else {
+
+        // Halve NAP
+        int new_nap = (*pT)->nap / 2;
+        (*pT)->nap = new_nap;
+
+        // Prune children
+        for (int i = 0; i < (*pT)->tc; i++) 
+            prune((*pT)->tv + i, E_FLAG);
+        
+        // Update TV, TC
+        Trie *new_tv = malloc(sizeof(Trie));
+        int new_tc  = 0; // index for next NEW_TV insert
+
+        for (int i = 0; i < (*pT)->tc; i++) {
+
+            Trie child = *( ((*pT)->tv) + i);
+            if (child != NULL) { // move non-NULL children
+                new_tv = realloc(new_tv, sizeof(Trie) * (new_tc+1));
+                new_tv[new_tc] = child;
+                new_tc++;
+            }
+        }
+        
+        if ( (*pT)->tc > 0)
+            free( (*pT)->tv); // free old TV
+
+        (*pT)->tv = new_tv;   // set TV, TC
+        (*pT)->tc = new_tc;
+
+        if (new_tc == 0) { // new_tv is empty but malloc'ed 
+            free( (*pT)->tv );
+            (*pT)->tv = NULL;
+        }
+
+        // if nap/2 == 0, free + set spot in ARR,parent TV to NULL
+        if (new_nap == 0) { 
+            arr[(*pT)->code] = NULL;
+            free((*pT)->tv); // children will have been freed
+            free((*pT));
+            *pT = NULL; // nullify spot in parent's TV
+        }
+
+        return 0;
+    }
+}
+
+
 
 void encodeT (Trie t, int i) {
     if (t == NULL)

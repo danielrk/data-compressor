@@ -24,6 +24,11 @@ void sawT (Trie t);
 // Assumes K isn't already inserted
 void insertT (Trie t, int K, int i, int nap);  
 
+// Delete nodes with low NAP
+// and reassign codes
+// Return new # codes assigned
+int prune (Trie t, int E_FLAG);
+
 // Update code in T to I
 void encodeT (Trie t, int i);
 
