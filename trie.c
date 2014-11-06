@@ -130,7 +130,7 @@ static int search (Trie *tv, int tc, int c)
     }
 }
 
-// Return child of T with K and increment NAP if exists,
+// Return child of T with K
 // Otherwise NULL
 Trie getT (Trie t, int K) {
     int loc = search(t->tv, t->tc, K);
@@ -141,7 +141,7 @@ Trie getT (Trie t, int K) {
 
         // K among t's children?
         if (t_child->K == K) {
-            sawT(t_child); // increment NAP
+            //sawT(t_child); // increment NAP
             return t_child;
         }
 
@@ -179,40 +179,59 @@ void insertT (Trie t, int K, int i, int nap)
     (t->tc)++;
 }
 
+// Make TV contiguous (fill in NULL spots)
+// and update TC
+static void shrink (Trie t)
+{
+    Trie *new_tv = malloc(sizeof(Trie));
+    int new_tc  = 0; // index for next NEW_TV insert
+
+    for (int i = 0; i < t->tc; i++) {
+
+        Trie child = *( (t->tv) + i);
+        if (child != NULL) { // move non-NULL children
+            new_tv = realloc(new_tv, sizeof(Trie) * (new_tc+1));
+            new_tv[new_tc] = child;
+            new_tc++;
+        }
+    }
+    
+    if ( t->tc > 0)
+        free( t->tv); // free old TV
+
+    t->tv = new_tv;   // set TV, TC
+    t->tc = new_tc;
+
+    if (new_tc == 0) { // new_tv is empty but malloc'ed 
+        free( t->tv );
+        t->tv = NULL;
+    }
+}
+
 // Delete (and NULLify in parent TV) 
 // nodes with low NAP and reassign codes
 // Return # codes assigned
 int prune (Trie *pT, int E_FLAG) 
 {
     if ((*pT)->nap == -1) { // root
+
+        // prune children
         for (int i = 0; i < (*pT)->tc; i++) {
 
             prune((*pT)->tv + i, E_FLAG);
         }
+        shrink(*pT);
 
-        // reinitialize ARR to have contiguous nodes
+
+        // new ARR for code reassignment
         Trie *new_arr = malloc(sizeof(Trie));
-        int new_i     = 0; // index for NEW_ARR === # elts in NEW_ARR
+        int new_i     = 0; // === # elts in NEW_ARR
 
         if (E_FLAG) { // code 0 already used
             *new_arr = NULL;
             new_i = 1;
         }
        
-
-
-        // Shrink TV, TC
-        if (E_FLAG) {
-
-        }
-        // Re-insert 1-char strings by default if necessary
-        else if (!E_FLAG) {
-            //
-            //??????????????????????????????????????????????????????
-            //reinitialize the 1-char strings for non -e
-            //oh yeah, shrink TV if some children are pruned off
-        }
-
         // move to new array
         for (int j = 0; j < arr_size; j++) {
 
@@ -231,6 +250,17 @@ int prune (Trie *pT, int E_FLAG)
         arr = new_arr;
         arr_size = new_i;
 
+
+        // Re-insert 1-char strings by default if necessary
+        if (!E_FLAG) {
+            for (int c = 0; c < 256; c++) {
+
+                if (getT(*pT, c) == NULL)
+                    insertT(*pT, c, arr_size++, 0);
+
+            }
+        }
+
         return arr_size; // == next_code == # codes assigned
     }
    
@@ -246,29 +276,7 @@ int prune (Trie *pT, int E_FLAG)
             prune((*pT)->tv + i, E_FLAG);
         
         // Update TV, TC
-        Trie *new_tv = malloc(sizeof(Trie));
-        int new_tc  = 0; // index for next NEW_TV insert
-
-        for (int i = 0; i < (*pT)->tc; i++) {
-
-            Trie child = *( ((*pT)->tv) + i);
-            if (child != NULL) { // move non-NULL children
-                new_tv = realloc(new_tv, sizeof(Trie) * (new_tc+1));
-                new_tv[new_tc] = child;
-                new_tc++;
-            }
-        }
-        
-        if ( (*pT)->tc > 0)
-            free( (*pT)->tv); // free old TV
-
-        (*pT)->tv = new_tv;   // set TV, TC
-        (*pT)->tc = new_tc;
-
-        if (new_tc == 0) { // new_tv is empty but malloc'ed 
-            free( (*pT)->tv );
-            (*pT)->tv = NULL;
-        }
+        shrink(*pT);
 
         // if nap/2 == 0, free + set spot in ARR,parent TV to NULL
         if (new_nap == 0) { 

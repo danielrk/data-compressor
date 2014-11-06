@@ -39,8 +39,10 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
     int K;
     while ((K = getchar()) != EOF) {
         Trie child = getT(C, K);
-        if (child != NULL)
+        if (child != NULL) { // increment NAP and go down trie
+            sawT(child); 
             C = child;
+        }
         else { 
             // ============ PUTBITS ==========================
             if (C == t) { // new 1-char string
@@ -60,10 +62,8 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
 
             // insert new code if table not full
             if (next_code < (int)pow(2, MAXBITS)) {
-                if (C == t)
-                    insertT(C, K, next_code++, 0); // nap++ below on getT
-                else
-                    insertT(C, K, next_code++, 1);
+
+                insertT(C, K, next_code++, 1);
             }
             
 
@@ -86,7 +86,7 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
             if (C == t)         // new single-char, so skip
                 continue;
             else {
-                C = getT(t, K); // increments NAP
+                C = getT(t, K);
 
                 if (C == NULL) { // (EMPTY, K) not in table
                     if (!E_FLAG)
@@ -95,6 +95,8 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
                     ungetc(K, stdin); // single-char on next insert
                     C = t;
                 }
+                else
+                    sawT(C);     // increment NAP
             }
         }
     }
