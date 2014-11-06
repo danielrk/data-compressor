@@ -1,4 +1,8 @@
+root Trie will NOT be placed in ARRAY; every other node will
 
+# NAP == number of appearances only after it’s given a code
+# codes printed out == # codes inserted (assuming table isn’t full yet)
+# codes printed out <  # codes
 BUG: without -e, misses the newline (need to print last char)
 BUG: with -e, i print out single-chars twice if next char is also unknown
  	-instead of building on unknown chars, just insert them and 

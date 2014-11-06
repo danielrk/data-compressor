@@ -5,6 +5,10 @@
 #define DIE(msg) fprintf (stderr, "%s\n", msg), exit (EXIT_FAILURE)
 #define DIE_FORMAT(format,value)  fprintf (stderr, format, value), exit (EXIT_FAILURE)
 
+// Nodes will be placed in ARRAY for pruning
+static Trie *nodev = malloc(sizeof(Trie));
+static int   nodec = 1;
+
 // Trie data structure
 struct node {
     int K;     // store char in int
@@ -140,7 +144,13 @@ void insertT (Trie t, int K, int i, int nap)
     for (int m = 0; m < loc; m++) {
         new_tv[m] = *((t->tv)+m);
     }
+
     new_tv[loc] = makeNode(K, i, nap);
+    // put node into array
+    array = realloc(array, sizeof(Trie) * (++tc) );
+    array[i] = new_tv[loc];
+
+
     for (int m = loc + 1; m < t->tc + 1; m++) {
         new_tv[m] = *((t->tv)+m-1);
     }

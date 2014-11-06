@@ -11,13 +11,16 @@
 
 // Special codes
 int ESCAPE = 0;
- 
+
+// Delete nodes with low NAP when table is full
 void prune(Trie t) {
     ;
 }
+
+// Compress STDIN into stream of codes
 int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
     
-    int next_code = 0; // == number of codes assigned
+    int next_code = 0; // == number of codes assigned == # elts in ARRAY
     int nBits = 1;     // #bits required to send NEXT code
     
     if (E_FLAG)
