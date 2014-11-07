@@ -1,3 +1,14 @@
+decode:
+X make sure Trie/naps are updated properly
+updating nBits
+	-problem is that insertions are done AFTER getting the next code
+	-maybe insert new code before getting next code
+pruning
+checking for special codes
+
+
+
+
 encode finished: no mem errors, testing seems to work, but STILL DON’T REALLY KNOW IF PRUNING WORKS, but i’ll start decode
 
 
@@ -59,3 +70,20 @@ While ((K = getchar()) != EOF)
 		C = currT
 	else
 		putBit(getCode(C))
+
+nBits = 9, code = *******101010100
+
+clear: code = 0000000[101010100]
+nExtra = 9
+extraBits = 0000000[101010100]
+nExtra = 9-8 = 1
+c = 00000000[10101010]
+putchar(00000000[10101010])
+extraBits = 0000000000000000
+
+
+nBits = 9, code = *******111111111
+code = 0000000111111111
+nExtra = 1 + 9 = 10
+extraBits = 1010100111111111
+

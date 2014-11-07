@@ -35,9 +35,18 @@ void encodeT (Trie t, int i);
 // Print out the keys in the trie
 void printT (Trie t, int level);
 
+// Return trie associated with CODE
+Trie C_to_T (int code);
+
+// Return K associated with CODE
+// Assumes CODE already assigned
+int getK (int code);
+
 // Return code of the prefix of string
 // associated with CODE
 // or -1 if prefix empty
 // Assumes CODE is already assigned
 int pref (int code);
 
+// Node with code CODE gets char K
+void updateK (int code, int K);

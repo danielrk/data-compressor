@@ -134,8 +134,24 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
     return 0;
 }
 
+// Print string associated with CODE to stdout,
+// incrementing NAP for each node visited
+// Return the left-most char (finalK) in string
+// Assumes CODE != EMPTY
+int putstring(int code) {
 
-
+    Trie t = C_to_T(code);
+    sawT(t);
+    if (pref(code) == EMPTY) {
+        putchar(t->K); 
+        return t->K;
+    }
+    else {
+        int finalK = putstring(pref(code));
+        putchar(t->K);
+        return finalK;
+    }
+}
 
 // Decompress stream of bits from encode
 int decode() {
@@ -144,7 +160,8 @@ int decode() {
     int E_FLAG  = getBits(1);
     int P_FLAG  = getBits(1);
 
-    int EMPTY = -1;
+    int EMPTY = -1; // code for empty string
+    int STANDBY = -2; // dummy K inserted to be replaced later
 
     int next_code = 0; // == number of codes assigned == # elts in ARRAY
     int nBits = 1;     // #bits required to send NEXT code
@@ -164,15 +181,32 @@ int decode() {
     int oldC = EMPTY;
     int newC;
     int C;
+    int KwK = 0; // KwK flag
+
     while ((newC = getBits(nBits)) != EOF) {
         C = newC;
         
-        if (C >= next_code) { // C unknown code
-        }
+        C_to_T(C)  
         
-        // Print string with code C
+        // Print string associated with C
+        int finalK = putstring(C);
 
+        if (KwK)
+            putchar(finalK);
+        
+        // Insert node with C as prefix and K=STANDBY
+        insertT( C_to_T(C), STANDBY, next_code++, 1);
 
+        // Prune (if so,  Update C, oldC, newC )
+        // Update nBits
+
+        // K now known for word inserted with prefix OLDC
+        updateK(oldC, finalK);
+        
+
+        // Update OLDC
+        oldC = newC;
+        KwK = 0;
     }
     return 0;
 }

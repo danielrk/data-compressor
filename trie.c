@@ -309,6 +309,18 @@ void printT (Trie t, int level) {
     }
 }
 
+// Return trie associated with CODE
+// Assumes code is valid index in ARR
+Trie C_to_T (int code) {
+    return arr[code];
+}
+
+// Return K associated with CODE
+// Assumes CODE already assigned
+int getK (int code) {
+    return arr[code]->K;
+}
+
 
 // Return code of the prefix of string
 // associated with CODE
@@ -319,4 +331,12 @@ int pref (int code) {
     Trie parent = arr[code]->s;
     int pref_code = parent->code;
     return pref_code;
+}
+
+
+// Node with code CODE gets char K
+// Assumes CODE already assigned
+void updateK (int code, int K) {
+    Trie t = arr[code];
+    t->K = K;
 }
