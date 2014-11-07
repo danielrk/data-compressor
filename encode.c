@@ -10,7 +10,11 @@
 #define DIE_FORMAT(format,value)  fprintf (stderr, format, value), exit (EXIT_FAILURE)
 
 // Special codes
-int ESCAPE = 0;
+int ESCAPE = 0; // code sent before new 1-char (-e)
+int EMPTY = -1; // code for empty string
+
+// Special K
+int STANDBY = -2; // dummy K inserted to be replaced later
 
 // Return smallest #bits necessary to
 // write NCODES codes
@@ -136,7 +140,8 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
 
 // Print string associated with CODE to stdout,
 // incrementing NAP for each node visited
-// Return the left-most char (finalK) in string
+// Return 1 if entire string printed,
+// 0 if KwK (Kw printed; not second K)
 // Assumes CODE != EMPTY
 int putstring(int code) {
 
@@ -144,12 +149,16 @@ int putstring(int code) {
     sawT(t);
     if (pref(code) == EMPTY) {
         putchar(t->K); 
-        return t->K;
+        return 1;
     }
     else {
-        int finalK = putstring(pref(code));
-        putchar(t->K);
-        return finalK;
+        putstring(pref(code));
+        if (t->K != STANDBY) { 
+            putchar(t->K);
+            return -1;
+        }
+        else   // KwK; will put second K later
+            return 0;
     }
 }
 
@@ -160,8 +169,6 @@ int decode() {
     int E_FLAG  = getBits(1);
     int P_FLAG  = getBits(1);
 
-    int EMPTY = -1; // code for empty string
-    int STANDBY = -2; // dummy K inserted to be replaced later
 
     int next_code = 0; // == number of codes assigned == # elts in ARRAY
     int nBits = 1;     // #bits required to send NEXT code
@@ -181,18 +188,25 @@ int decode() {
     int oldC = EMPTY;
     int newC;
     int C;
-    int KwK = 0; // KwK flag
 
     while ((newC = getBits(nBits)) != EOF) {
         C = newC;
         
         C_to_T(C)  
         
-        // Print string associated with C
-        int finalK = putstring(C);
+        // ========== PRINT STRING WITH NEW CODE =======
 
-        if (KwK)
+        // If newC was just inserted (KwK), 
+        // print oldC==Kw then K
+        int finalK;
+        while (pref(oldC)
+        if (!putstring(C))
             putchar(finalK);
+
+        // K now known for word inserted with prefix OLDC
+        if (oldC != EMPTY) 
+            updateK(oldC, finalK); // WRONG!!!!!!!!!!!!!!!!!!!!!! oldC is the PREFIX code
+
         
         // Insert node with C as prefix and K=STANDBY
         insertT( C_to_T(C), STANDBY, next_code++, 1);
@@ -200,8 +214,6 @@ int decode() {
         // Prune (if so,  Update C, oldC, newC )
         // Update nBits
 
-        // K now known for word inserted with prefix OLDC
-        updateK(oldC, finalK);
         
 
         // Update OLDC
