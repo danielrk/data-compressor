@@ -317,6 +317,6 @@ void printT (Trie t, int level) {
 int pref (int code) {
 
     Trie parent = arr[code]->s;
-    pref_code = parent->code;
+    int pref_code = parent->code;
     return pref_code;
 }

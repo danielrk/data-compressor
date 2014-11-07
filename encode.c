@@ -173,6 +173,7 @@ int decode() {
         // Print string with code C
 
 
+    }
     return 0;
 }
 
