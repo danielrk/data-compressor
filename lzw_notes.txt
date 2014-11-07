@@ -1,3 +1,6 @@
+encode finished: no mem errors, testing seems to work, but STILL DON’T REALLY KNOW IF PRUNING WORKS, but i’ll start decode
+
+
 need to update nBits after pruning, etc
 
 root Trie will NOT be placed in ARRAY; every other node will

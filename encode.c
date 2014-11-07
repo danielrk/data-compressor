@@ -29,6 +29,17 @@ int get_nbits(int nCodes) {
 // Compress STDIN into stream of codes
 int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
     
+    // Send option args encoded as:
+    // MAXBITS: 6 bits (since max value is 20)
+    // E_FLAG: 1 bit
+    // P_FLAG: 1 bit
+    
+    putBits(6, MAXBITS);
+    putBits(1, E_FLAG);
+    putBits(1, P_FLAG);
+
+
+    
     int next_code = 0; // == number of codes assigned == # elts in ARRAY
     int nBits = 1;     // #bits required to send NEXT code
     
@@ -115,13 +126,53 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
 
     if (C != t)
         putBits(nBits, getCodeT(C));
+    
+    flushBits();
 
-    printT(t, 0);
+    //printT(t, 0);
     destroyT(t); 
     return 0;
 }
 
+
+
+
+// Decompress stream of bits from encode
 int decode() {
+
+    int MAXBITS = getBits(6);
+    int E_FLAG  = getBits(1);
+    int P_FLAG  = getBits(1);
+
+    int EMPTY = -1;
+
+    int next_code = 0; // == number of codes assigned == # elts in ARRAY
+    int nBits = 1;     // #bits required to send NEXT code
+    
+    if (E_FLAG)
+        next_code = 1; // already assigned 0 to ESCAPE
+
+    Trie t = createT();
+
+    if (!E_FLAG) { // initialize all one-char strings
+        for (int K = 0; K < 256; K++)
+            insertT(t, K, next_code++, 0);
+
+        nBits = 8;
+    }
+
+    int oldC = EMPTY;
+    int newC;
+    int C;
+    while ((newC = getBits(nBits)) != EOF) {
+        C = newC;
+        
+        if (C >= next_code) { // C unknown code
+        }
+        
+        // Print string with code C
+
+
     return 0;
 }
 

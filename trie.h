@@ -35,4 +35,9 @@ void encodeT (Trie t, int i);
 // Print out the keys in the trie
 void printT (Trie t, int level);
 
+// Return code of the prefix of string
+// associated with CODE
+// or -1 if prefix empty
+// Assumes CODE is already assigned
+int pref (int code);
 

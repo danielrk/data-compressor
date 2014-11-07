@@ -15,5 +15,6 @@ Date  Time   Spent  Work completed
 11/6  11:00  0:30   First draft pruning
 1l/6  12:30  0:30   Fixed bad pruning memory write
 11/6  16:30  0:30   Fixed consecutive pruning bug
+11/7   9:00  1:00   Added parent pointers to nodes/pref(C)
              ----
                     TOTAL time spent

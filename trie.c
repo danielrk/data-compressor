@@ -18,12 +18,13 @@ struct node {
     Trie *tv;  // array of subTries
     int tc;    // #elts in tv
     int nap;   // number of appearances
+    Trie s;    // parent node
 };
 
 
 // Return a one-element trie with K set to C
-// with code I, #appearances = NAP
-static Trie makeNode (int c, int i, int nap)
+// with code I, #appearances = NAP, parent = S
+static Trie makeNode (int c, int i, int nap, Trie s)
 {
     Trie t = malloc (sizeof(*t));
     t->K = c;
@@ -31,10 +32,11 @@ static Trie makeNode (int c, int i, int nap)
     t->tv = NULL;
     t->tc = 0;
     t->nap = nap;
+    t->s   = s;
     return t;
 }
 
-// Return a one-element trie whose contents are meaningless 
+// Return a one-element empty trie 
 // EXCEPT tv, tc
 Trie createT (void)
 {
@@ -44,6 +46,7 @@ Trie createT (void)
     t->tv = NULL;
     t->tc = 0;
     t->nap = -1;
+    t->s = NULL;
     
     // Initialize ARR at 1 since first code is at most index 1
     arr = malloc(sizeof(Trie));
@@ -163,7 +166,7 @@ void insertT (Trie t, int K, int i, int nap)
         new_tv[m] = *((t->tv)+m);
     }
 
-    new_tv[loc] = makeNode(K, i, nap);
+    new_tv[loc] = makeNode(K, i, nap, t);
     // put node into array
     arr = realloc(arr, sizeof(Trie) * (i+1) );
     arr_size = i+1;
@@ -304,4 +307,16 @@ void printT (Trie t, int level) {
     for (int i = 0; i < t->tc; i++) {
         printT(*((t->tv) + i), level + 1);
     }
+}
+
+
+// Return code of the prefix of string
+// associated with CODE
+// or -1 if prefix empty
+// Assumes CODE is already assigned
+int pref (int code) {
+
+    Trie parent = arr[code]->s;
+    pref_code = parent->code;
+    return pref_code;
 }
