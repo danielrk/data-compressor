@@ -147,14 +147,15 @@ int putstring(int code, int *pKwK) {
 
     Trie t = C_to_T(code);
     sawT(t);
+    int K = getK(code);
     if (pref(code) == EMPTY) {
-        putchar(t->K); 
-        return t->K;
+        putchar(K); 
+        return K;
     }
     else {
         int finalK = putstring(pref(code));
-        if (t->K != STANDBY) 
-            putchar(t->K);
+        if (K != STANDBY) 
+            putchar(K);
 
         else   // KwK; will put second K later
             *pKwK = 1; 
