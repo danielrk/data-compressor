@@ -153,7 +153,7 @@ int putstring(int code, int *pKwK) {
         return K;
     }
     else {
-        int finalK = putstring(pref(code));
+        int finalK = putstring(pref(code), NULL);
         if (K != STANDBY) 
             putchar(K);
 
