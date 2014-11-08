@@ -20,5 +20,6 @@ Date  Time   Spent  Work completed
 11/7  14:00  1:00   decode: pre-emptive inserts
 11/7  21:30  1:00   decode: nBits, pruning
 11/8   9:30  1:00   decode: last_insert bug, -e
+11/8  14:00  2:00   Fixed double declaration bug
              ----
                     TOTAL time spent

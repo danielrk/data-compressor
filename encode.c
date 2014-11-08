@@ -133,7 +133,7 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
     
     flushBits();
 
-    //printT(t, 0);
+   // printT(t, 0);
     destroyT(t); 
     return 0;
 }
@@ -205,11 +205,11 @@ int decode() {
             // If C was just inserted w/ STANDBY (KwK), 
             // print oldC==Kw then K
             int KwK = 0;
-            int finalK = putstring(C, &KwK);
+            finalK = putstring(C, &KwK);
             if (KwK)
                 putchar(finalK);
         }
-
+        
         // K now known for word inserted with prefix OLDC
         if (last_insert != EMPTY) 
             updateK(last_insert, finalK);
@@ -222,7 +222,7 @@ int decode() {
         if (next_code < (int)pow(2, MAXBITS)) {
             
             
-            if (E_FLAG && C == ESCAPE) {
+            if (E_FLAG && (C == ESCAPE)) {
                 insertT(t, finalK, next_code++, 1);
                 last_insert = EMPTY;
             }
@@ -261,6 +261,9 @@ int decode() {
         
 
     }
+
+    //printT(t, 0);
+    destroyT(t);
     return 0;
 }
 
