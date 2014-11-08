@@ -187,21 +187,28 @@ int decode() {
         nBits = 8;
     }
 
-    int newC;
     int C;
     int last_insert = EMPTY; // code assigned to last inserted node
 
-    while ((newC = getBits(nBits)) != EOF) {
-        C = newC;
+    while ((C = getBits(nBits)) != EOF) {
         
         // ========== PRINT STRING WITH NEW CODE =======
 
-        // If newC was just inserted (KwK), 
-        // print oldC==Kw then K
-        int KwK = 0;
-        int finalK = putstring(C, &KwK);
-        if (KwK)
+        int finalK; // first char in C string
+
+        // -e: check for ESCAPE
+        if (E_FLAG && C == ESCAPE) {
+            finalK = getBits(CHAR_BIT);
             putchar(finalK);
+        }
+        else {
+            // If C was just inserted w/ STANDBY (KwK), 
+            // print oldC==Kw then K
+            int KwK = 0;
+            int finalK = putstring(C, &KwK);
+            if (KwK)
+                putchar(finalK);
+        }
 
         // K now known for word inserted with prefix OLDC
         if (last_insert != EMPTY) 
@@ -213,11 +220,20 @@ int decode() {
 
         // insert new code if table not full
         if (next_code < (int)pow(2, MAXBITS)) {
-
-            // Insert node with C as prefix and K=STANDBY
-            insertT( C_to_T(C), STANDBY, next_code, 1); // RUINS BINARY SEARCH? does it matter? probably not
-            last_insert = next_code++;
+            
+            
+            if (E_FLAG && C == ESCAPE) {
+                insertT(t, finalK, next_code++, 1);
+                last_insert = EMPTY;
+            }
+            else {
+                // Insert node with C as prefix and K=STANDBY
+                insertT( C_to_T(C), STANDBY, next_code, 1); // RUINS BINARY SEARCH? does it matter? probably not
+                last_insert = next_code++;
+            }
         }
+        else
+            last_insert = EMPTY; // no insert to update next time
         
 
         // =========== UPDATE NBITS =======================

@@ -1,3 +1,7 @@
+-e flag: check for special codes
+
+
+
 what if prune right before KwK?
 
 decode:
