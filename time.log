@@ -18,5 +18,6 @@ Date  Time   Spent  Work completed
 11/7   9:00  1:00   Added parent pointers to nodes/pref(C)
 11/7  12:00  2:00   Outline for decode
 11/7  14:00  1:00   decode: pre-emptive inserts
+11/7  21:30  1:00   decode: nBits, pruning
              ----
                     TOTAL time spent

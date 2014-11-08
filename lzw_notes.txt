@@ -1,3 +1,5 @@
+what if prune right before KwK?
+
 decode:
 X make sure Trie/naps are updated properly
 updating nBits

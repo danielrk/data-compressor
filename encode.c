@@ -143,22 +143,23 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
 // Return 1 if entire string printed,
 // 0 if KwK (Kw printed; not second K)
 // Assumes CODE != EMPTY
-int putstring(int code) {
+int putstring(int code, int *pKwK) {
 
     Trie t = C_to_T(code);
     sawT(t);
     if (pref(code) == EMPTY) {
         putchar(t->K); 
-        return 1;
+        return t->K;
     }
     else {
-        putstring(pref(code));
-        if (t->K != STANDBY) { 
+        int finalK = putstring(pref(code));
+        if (t->K != STANDBY) 
             putchar(t->K);
-            return -1;
-        }
+
         else   // KwK; will put second K later
-            return 0;
+            *pKwK = 1; 
+
+        return finalK;
     }
 }
 
@@ -185,40 +186,63 @@ int decode() {
         nBits = 8;
     }
 
-    int oldC = EMPTY;
     int newC;
     int C;
+    int last_insert = EMPTY; // code assigned to last inserted node
 
     while ((newC = getBits(nBits)) != EOF) {
         C = newC;
-        
-        C_to_T(C)  
         
         // ========== PRINT STRING WITH NEW CODE =======
 
         // If newC was just inserted (KwK), 
         // print oldC==Kw then K
-        int finalK;
-        while (pref(oldC)
-        if (!putstring(C))
+        int KwK = 0;
+        int finalK = putstring(C, &KwK);
+        if (KwK)
             putchar(finalK);
 
         // K now known for word inserted with prefix OLDC
-        if (oldC != EMPTY) 
-            updateK(oldC, finalK); // WRONG!!!!!!!!!!!!!!!!!!!!!! oldC is the PREFIX code
+        if (last_insert != EMPTY) 
+            updateK(last_insert, finalK);
 
         
-        // Insert node with C as prefix and K=STANDBY
-        insertT( C_to_T(C), STANDBY, next_code++, 1);
+        
+        // =========== INSERT ==============================
 
-        // Prune (if so,  Update C, oldC, newC )
-        // Update nBits
+        // insert new code if table not full
+        if (next_code < (int)pow(2, MAXBITS)) {
 
+            // Insert node with C as prefix and K=STANDBY
+            insertT( C_to_T(C), STANDBY, next_code, 1); // RUINS BINARY SEARCH? does it matter? probably not
+            last_insert = next_code++;
+        }
         
 
-        // Update OLDC
-        oldC = newC;
-        KwK = 0;
+        // =========== UPDATE NBITS =======================
+
+        // Prune as soon as last slot taken
+        if (next_code == (int)pow(2, MAXBITS)) {
+            if (P_FLAG) {
+
+                next_code = prune(&t, E_FLAG);
+                nBits = get_nbits(next_code);
+                // no need to update K in insertion
+                // since it'll be pruned
+                last_insert = EMPTY;
+                
+            }
+            else
+                ;
+        }
+
+        // Increase NBITS only when #codes assigned
+        // exceeds it
+        else if (next_code > (int)pow(2, nBits))
+            nBits++;
+            
+        
+
     }
     return 0;
 }
