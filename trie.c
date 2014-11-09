@@ -101,12 +101,6 @@ void destroyT (Trie t)
 
 
 
-// Return #appearances in T
-int getNapT(Trie t) {
-    return t->nap;
-}
-
-
 
 // Return code in T
 int getCodeT (Trie t) {
