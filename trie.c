@@ -49,9 +49,10 @@ Trie createT (void)
     t->s = NULL;
     
     // Initialize ARR at 1 since first code is at most index 1
-    arr = malloc(sizeof(Trie));
+    arr = malloc(sizeof(Trie)*2);
     arr[0] = NULL;
-    arr_size = 1;
+    arr[1] = NULL;
+    arr_size = 2;
 
     return t;
 }
@@ -227,12 +228,13 @@ int prune (Trie *pT, int E_FLAG)
 
 
         // new ARR for code reassignment
-        Trie *new_arr = malloc(sizeof(Trie));
+        Trie *new_arr = malloc(sizeof(Trie)*2);
         int new_i     = 0; // === # elts in NEW_ARR
 
-        if (E_FLAG) { // code 0 already used
+        if (E_FLAG) { // code 0,1 already used
             *new_arr = NULL;
-            new_i = 1;
+            *(new_arr+1) = NULL;
+            new_i = 2;
         }
        
         // move to new array
@@ -312,6 +314,9 @@ void printT (Trie t, int level) {
 // Return trie associated with CODE
 // Assumes code is valid index in ARR
 Trie C_to_T (int code) {
+    if (code < 0 || code >= arr_size)
+        DIE("decode: invalid code");
+
     return arr[code];
 }
 

@@ -1,3 +1,11 @@
+
+a = realloc(a, NEW_SIZE);     // Don't do this!
+
+decode:make sure pruning works if you neglect arr[0], arr[1]
+		- it doesn’t?
+make sure decode gives error if bit stream isn’t from encode
+
+
 Make 0 QUIT code for -e
 ESCAPE: 1
 

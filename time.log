@@ -22,5 +22,6 @@ Date  Time   Spent  Work completed
 11/8   9:30  1:00   decode: last_insert bug, -e
 11/8  14:00  2:00   Fixed double declaration bug
 11/8  18:00  6:00   Fixed flushBits() bug
+11/9   9:30  1:00   Bombproofed decode
              ----
                     TOTAL time spent

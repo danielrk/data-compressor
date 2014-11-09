@@ -1,3 +1,12 @@
+// encode, decode
+//      File compression using the Lempel-Ziv-Welch algorithm.
+//      By: Daniel Kim, 11/9/14
+//      code.h provided by Stan Eisenstat
+//
+// usage: encode [-m MAXBITS] [-p] [-e]
+//        decode
+
+
 #include "trie.h"
 #include "/c/cs323/Hwk2/code.h" 
 #include <string.h>
@@ -10,7 +19,7 @@
 #define DIE_FORMAT(format,value)  fprintf (stderr, format, value), exit (EXIT_FAILURE)
 
 // Special codes
-int QUIT = 0;
+int QUIT = 0;   // decode quits when reading trailing 0's in flushBits()
 int ESCAPE = 1; // code sent before new 1-char (-e)
 int EMPTY = -1; // code for empty string
 
@@ -153,7 +162,7 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
 // Assumes CODE != EMPTY
 int putstring(int code, int *pKwK) {
 
-    Trie t = C_to_T(code);
+    Trie t = C_to_T(code); // DIEs if code invalid
     sawT(t);
     int K = getK(code);
     if (pref(code) == EMPTY) {
@@ -179,6 +188,9 @@ int decode() {
     int E_FLAG  = getBits(1);
     int P_FLAG  = getBits(1);
 
+    if (MAXBITS <= CHAR_BIT || MAXBITS > 20
+           || E_FLAG == EOF || P_FLAG == EOF)
+        DIE("decode: bit stream not encoded by encode");
 
     int next_code = 0; // == number of codes assigned == # elts in ARRAY
     int nBits = 1;     // #bits required to send NEXT code
@@ -211,13 +223,17 @@ int decode() {
         // -e: check for ESCAPE
         if (E_FLAG && C == ESCAPE) {
             finalK = getBits(CHAR_BIT);
+
+            if (finalK == EOF)
+                DIE("decode: bit stream not encoded by encode");
+
             putchar(finalK);
         }
         else {
             // If C was just inserted w/ STANDBY (KwK), 
             // print oldC==Kw then K
             int KwK = 0;
-            finalK = putstring(C, &KwK);
+            finalK = putstring(C, &KwK); // DIEs if C not in table
             if (KwK)
                 putchar(finalK);
         }
@@ -240,7 +256,7 @@ int decode() {
             }
             else {
                 // Insert node with C as prefix and K=STANDBY
-                insertT( C_to_T(C), STANDBY, next_code, 1); // RUINS BINARY SEARCH? does it matter? probably not
+                insertT( C_to_T(C), STANDBY, next_code, 1); 
                 last_insert = next_code++;
             }
         }
