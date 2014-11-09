@@ -29,8 +29,6 @@ void insertT (Trie t, int K, int i, int nap);
 // Return new # codes assigned
 int prune (Trie *pT, int E_FLAG);
 
-// Update code in T to I
-void encodeT (Trie t, int i);
 
 // Print out the keys in the trie
 void printT (Trie t, int level);

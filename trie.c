@@ -1,3 +1,10 @@
+// trie.c
+//   Implementation of the trie-array hybrid data structure,
+//   where pointers to nodes of the trie are kept in an array
+//   
+//   By: Daniel Kim
+//   Date: 11/9/14
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "trie.h"
@@ -7,9 +14,13 @@
 
 // Nodes will be placed in ARRAY for pruning
 // ARR_SIZE === # codes assigned
-// ARR[0] will be NULL w/ -e option; hold a node otherwise
+// ARR[0], ARR[1] will be NULL w/ -e option; hold a node otherwise
+
 static Trie *arr = NULL;
 static int   arr_size = 0;
+
+
+
 
 // Trie data structure
 struct node {
@@ -20,6 +31,7 @@ struct node {
     int nap;   // number of appearances
     Trie s;    // parent node
 };
+
 
 
 // Return a one-element trie with K set to C
@@ -36,6 +48,8 @@ static Trie makeNode (int c, int i, int nap, Trie s)
     return t;
 }
 
+
+
 // Return a one-element empty trie 
 // EXCEPT tv, tc
 Trie createT (void)
@@ -48,7 +62,7 @@ Trie createT (void)
     t->nap = -1;
     t->s = NULL;
     
-    // Initialize ARR at 1 since first code is at most index 1
+    // Initialize ARR at size 2 since first code is at most index 2
     arr = malloc(sizeof(Trie)*2);
     arr[0] = NULL;
     arr[1] = NULL;
@@ -57,7 +71,9 @@ Trie createT (void)
     return t;
 }
 
-// Free recursively
+
+
+// Free trie recursively
 static void freeT (Trie t) 
 {
     if (t == NULL){
@@ -71,7 +87,10 @@ static void freeT (Trie t)
     free (t);
 }
 
+
+
 // Destroy trie T
+// and associated array
 void destroyT (Trie t)
 {
     freeT(t); 
@@ -81,15 +100,20 @@ void destroyT (Trie t)
 }
 
 
+
 // Return #appearances in T
 int getNapT(Trie t) {
     return t->nap;
 }
 
+
+
 // Return code in T
 int getCodeT (Trie t) {
     return t->code;
 }
+
+
 
 // Increment #appearances in T
 void sawT (Trie t) {
@@ -108,9 +132,11 @@ static int search (Trie *tv, int tc, int c)
     else if (tc == 0)
         return 0;
     else { 
+
         int i = tc / 2;
         int piv_char = tv[i]->K;
         if (tc == 1) {
+
             if (c < piv_char)
                 return 0;
             else if (c > piv_char)
@@ -120,34 +146,42 @@ static int search (Trie *tv, int tc, int c)
             }
         }
         else if (tc > 1) {
+
             if (c < piv_char)
                 return search(tv, i, c);
+
             else if (c > piv_char) {
                 int new_s = i + 1;
                 return new_s + search(tv+new_s, tc-new_s, c);
             }
+
             else if (c == piv_char) { // found
                 return i;
             }
         }
-        return -1; // compiler
+        return -1; 
     }
 }
+
+
+
 
 // Return child of T with K
 // Otherwise NULL
 Trie getT (Trie t, int K) {
+
     int loc = search(t->tv, t->tc, K);
+
     if (loc >= t->tc) // not in trie
         return NULL;
     else { 
+
         Trie t_child = *(t->tv + loc);
 
         // K among t's children?
-        if (t_child->K == K) {
-            //sawT(t_child); // increment NAP
+        if (t_child->K == K) 
             return t_child;
-        }
+        
 
         // string not in table
         return NULL;
@@ -161,27 +195,33 @@ Trie getT (Trie t, int K) {
 // Assumes K isn't already inserted
 void insertT (Trie t, int K, int i, int nap)
 {
-    int loc = search(t->tv, t->tc, K); // where
-    Trie *new_tv = malloc(sizeof(Trie)*(t->tc + 1));// could optimize time by doubling when out of space
+    int loc = search(t->tv, t->tc, K); // location of insert
+    
+    // copy left part of TV to new TV
+    Trie *new_tv = malloc(sizeof(Trie)*(t->tc + 1));
     for (int m = 0; m < loc; m++) {
         new_tv[m] = *((t->tv)+m);
     }
 
+    // make new node and put into new TV, array
     new_tv[loc] = makeNode(K, i, nap, t);
-    // put node into array
     arr = realloc(arr, sizeof(Trie) * (i+1) );
     arr_size = i+1;
     arr[i] = new_tv[loc];
 
-
+    // copy right part of TV to new TV
     for (int m = loc + 1; m < t->tc + 1; m++) {
         new_tv[m] = *((t->tv)+m-1);
     }
+
     if (t->tc > 0) // free old TV if not empty
         free(t->tv);
+
     t->tv = new_tv;
     (t->tc)++;
 }
+
+
 
 // Make TV contiguous (fill in NULL spots)
 // and update TC
@@ -193,7 +233,9 @@ static void shrink (Trie t)
     for (int i = 0; i < t->tc; i++) {
 
         Trie child = *( (t->tv) + i);
+
         if (child != NULL) { // move non-NULL children
+
             new_tv = realloc(new_tv, sizeof(Trie) * (new_tc+1));
             new_tv[new_tc] = child;
             new_tc++;
@@ -211,6 +253,9 @@ static void shrink (Trie t)
         t->tv = NULL;
     }
 }
+
+
+
 
 // Delete (and NULLify in parent TV) 
 // nodes with low NAP and reassign codes
@@ -232,6 +277,7 @@ int prune (Trie *pT, int E_FLAG)
         int new_i     = 0; // === # elts in NEW_ARR
 
         if (E_FLAG) { // code 0,1 already used
+
             *new_arr = NULL;
             *(new_arr+1) = NULL;
             new_i = 2;
@@ -241,6 +287,7 @@ int prune (Trie *pT, int E_FLAG)
         for (int j = 0; j < arr_size; j++) {
 
             if (arr[j] != NULL) {
+
                 new_arr = realloc(new_arr, sizeof(Trie)*(new_i+1));
                 new_arr[new_i] = arr[j];
 
@@ -285,6 +332,7 @@ int prune (Trie *pT, int E_FLAG)
 
         // if nap/2 == 0, free + set spot in ARR,parent TV to NULL
         if (new_nap == 0) { 
+
             arr[(*pT)->code] = NULL;
             free((*pT)->tv); // children will have been freed
             free((*pT));
@@ -297,12 +345,6 @@ int prune (Trie *pT, int E_FLAG)
 
 
 
-void encodeT (Trie t, int i) {
-    if (t == NULL)
-        DIE("error: encoding a null trie");
-    t->code = i;
-}
-
 // Print out the keys in the trie
 void printT (Trie t, int level) {
     printf("Level %d: (code %d, key %d)\n", level, t->code, t->K);
@@ -314,11 +356,13 @@ void printT (Trie t, int level) {
 // Return trie associated with CODE
 // Assumes code is valid index in ARR
 Trie C_to_T (int code) {
+
     if (code < 0 || code >= arr_size)
         DIE("decode: invalid code");
 
     return arr[code];
 }
+
 
 // Return K associated with CODE
 // Assumes CODE already assigned
@@ -337,6 +381,7 @@ int pref (int code) {
     int pref_code = parent->code;
     return pref_code;
 }
+
 
 
 // Node with code CODE gets char K
