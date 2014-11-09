@@ -1,3 +1,25 @@
+Make 0 QUIT code for -e
+ESCAPE: 1
+
+BUGS:
+
+this only occurs when code.o is used and -e flag:
+[drk33@frog Hwk2]$ echo "abcd" | ./encode -e | ./decode
+abcd
+??[drk33@frog Hwk2]$
+
+	-[1011]0000: trailing 0’s?
+	-idk, it’s probably that encode gives too many bytes with -e flag… something to do with flushBits? maybe the final conditional putBits? something with unget?
+
+HAPPENS OFTEN ON SMALLER INPUTS…not larger ones so far
+sending total # bits divisible by 8 works. plus code2.o works. so MUST BE SOMETHING TO DO WITH BITS… I’m sending the right codes! 
+
+
+putchar gives unsigned chars… problem with \0, etc?
+	-probably not
+TODO:
+should give error when decode realizes codes couldn’t have come from encode (or else seg faults abound)
+
 
 
 
