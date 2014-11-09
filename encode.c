@@ -10,7 +10,8 @@
 #define DIE_FORMAT(format,value)  fprintf (stderr, format, value), exit (EXIT_FAILURE)
 
 // Special codes
-int ESCAPE = 0; // code sent before new 1-char (-e)
+int QUIT = 0;
+int ESCAPE = 1; // code sent before new 1-char (-e)
 int EMPTY = -1; // code for empty string
 
 // Special K
@@ -48,7 +49,8 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
     int nBits = 1;     // #bits required to send NEXT code
     
     if (E_FLAG)
-        next_code = 1; // already assigned 0 to ESCAPE
+        next_code = 2; // already assigned 0 to QUIT
+                       //                  1 to ESCAPE
 
     Trie t = createT();
 
@@ -61,6 +63,8 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
 
     Trie C = t;
     int K;
+
+    //int DEBUG_COUNT = 0;
     while ((K = getchar()) != EOF) {
         Trie child = getT(C, K);
         if (child != NULL) { // increment NAP and go down trie
@@ -68,6 +72,7 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
             C = child;
         }
         else { 
+     //       printf("PRINT #%d\n", DEBUG_COUNT++);
             // ============ PUTBITS ==========================
             if (C == t) { // new 1-char string
                 if (!E_FLAG)
@@ -128,9 +133,12 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
         }
     }
 
-    if (C != t)
+    if (C != t) {
+        //printf("PRINT #%d\n", DEBUG_COUNT++);
         putBits(nBits, getCodeT(C));
+    }
     
+    //printf("FLUSHING BITS\n");
     flushBits();
 
    // printT(t, 0);
@@ -176,7 +184,8 @@ int decode() {
     int nBits = 1;     // #bits required to send NEXT code
     
     if (E_FLAG)
-        next_code = 1; // already assigned 0 to ESCAPE
+        next_code = 2; // already assigned 0 to QUIT
+                       //                  1 to ESCAPE
 
     Trie t = createT();
 
@@ -189,9 +198,12 @@ int decode() {
 
     int C;
     int last_insert = EMPTY; // code assigned to last inserted node
-
+    //int DEBUG_COUNT = 0;
     while ((C = getBits(nBits)) != EOF) {
         
+        // -e: Break on C = QUIT
+        if (E_FLAG && C == QUIT)
+            break;
         // ========== PRINT STRING WITH NEW CODE =======
 
         int finalK; // first char in C string
@@ -262,7 +274,6 @@ int decode() {
 
     }
 
-    //printT(t, 0);
     destroyT(t);
     return 0;
 }
@@ -300,18 +311,6 @@ int main (int argc, char **argv)
         }
         if (m_flag) // last arg was "-m"
             DIE("usage: encode [-m MAXBITS] [-p] [-e]");
-
-        // Trie t = createT();
-
-        // int code = 1;
-        // insertT(t, 1, code++, 1);
-        // insertT(t, 2, code++, 1);
-        // insertT(t, 3, code++, 5);
-        // 
-        // prune(&t, 1);
-
-        // printT(t, 0);
-        // destroyT(t);
 
         encode(MAXBITS, E_FLAG, P_FLAG);
     }
