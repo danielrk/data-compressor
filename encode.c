@@ -12,7 +12,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 #include <limits.h>
 
 #define DIE(msg) fprintf (stderr, "%s\n", msg), exit (EXIT_FAILURE)
@@ -33,10 +32,12 @@ int STANDBY = -2; // decode: dummy K inserted to be replaced later
 // write NCODES codes
 int get_nbits(int nCodes) {
 
-    int n = 1;
-    int max = (int)pow(2,n);
-    while (max < nCodes)
-        max = (int)pow(2,++n);
+    int max = 2;
+    int n   = 1;
+    while (max < nCodes) {
+        max = max << 1;
+        n++;
+    }
     
     return n;
 }
@@ -117,7 +118,7 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
             // =========== INSERT ==============================
 
             // insert new code if table not full
-            if (next_code < (int)pow(2, MAXBITS)) {
+            if (next_code < (1 << MAXBITS)) {
 
                 insertT(C, K, next_code++, 1);
             }
@@ -127,7 +128,7 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
 
 
             // Prune as soon as last slot taken
-            if (next_code == (int)pow(2, MAXBITS)) {
+            if (next_code == (1 << MAXBITS)) {
 
                 if (P_FLAG) {
 
@@ -140,7 +141,7 @@ int encode(int MAXBITS, int E_FLAG, int P_FLAG) {
 
             // Increase NBITS only when #codes assigned
             // exceeds it
-            else if (next_code > (int)pow(2, nBits))
+            else if (next_code > (1 << nBits))
                 nBits++;
            
 
@@ -299,7 +300,7 @@ int decode() {
         // =========== INSERT NEW CODE ====================
 
         // insert new code if table not full
-        if (next_code < (int)pow(2, MAXBITS)) {
+        if (next_code < (1 << MAXBITS)) {
             
             
             if (E_FLAG && (C == ESCAPE)) {
@@ -320,7 +321,7 @@ int decode() {
         // =========== UPDATE NBITS =======================
 
         // Prune as soon as last slot taken
-        if (next_code == (int)pow(2, MAXBITS)) {
+        if (next_code == (1 << MAXBITS)) {
 
             if (P_FLAG) {
 
@@ -337,7 +338,7 @@ int decode() {
 
         // Increase NBITS only when #codes assigned
         // exceeds it
-        else if (next_code > (int)pow(2, nBits))
+        else if (next_code > (1 << nBits))
             nBits++;
             
     }
